@@ -38,6 +38,4 @@ variable "name" {
   default = "pi5grupo03"
 }
 
-variable "database_password" {
-  default = "password"
-}
+variable "database_password" {}
