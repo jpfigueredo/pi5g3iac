@@ -1,0 +1,45 @@
+- name: Configure EC2 instance for public subnet
+  hosts: ec2Public
+  become: true
+  vars:
+    ssh_key: ~/.ssh/pi5-grupo3-key-pair.pem
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install Python and other dependencies
+      apt:
+        name:
+          - python
+          - python-pip
+          - python-setuptools
+          - python3-setuptools
+          - python3-pip
+          - build-essential
+        state: present
+
+    - name: Add instance to public security group
+      local_action:
+        module: ec2_group
+        name: "{{ public_security_group_name }}"
+        region: "{{ aws_region }}"
+        rules:
+          - proto: tcp
+            from_port: 22
+            to_port: 22
+            cidr_ip: 0.0.0.0/0
+
+    - name: Copy SSH key to instance
+      copy:
+        src: "{{ ssh_key }}"
+        dest: "/home/ubuntu/.ssh/id_rsa"
+        mode: "0400"
+        owner: ubuntu
+        group: ubuntu
+
+    - name: Add SSH key to authorized_keys
+      authorized_key:
+        user: ubuntu
+        state: present
+        key: "{{ lookup('file', ssh_key + '.pub') }}"

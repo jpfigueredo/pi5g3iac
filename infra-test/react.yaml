@@ -1,0 +1,45 @@
+- name: Install Docker
+  hosts: public-instance
+  become: true
+  tasks:
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+
+- name: Configurando aplicação React
+  hosts: ec2React
+  become: true
+  vars:
+    port: 3000
+
+  tasks:
+    - name: Instalando Docker
+      become: true
+      apt:
+        name: docker.io
+        update_cache: yes
+
+    - name: Iniciando serviço do Docker
+      become: true
+      systemd:
+        name: docker
+        state: started
+
+    - name: Baixando imagem Docker do Node.js
+      become: true
+      docker_image:
+        name: node:latest
+
+    - name: Criando container para aplicação React
+      become: true
+      docker_container:
+        name: react-app
+        image: node:latest
+        state: started
+        ports:
+          - "{{ port }}:3000"
+        volumes:
+          - "{{ playbook_dir }}/app:/app"
+        command: >
+          sh -c "cd /app && npm install && npm run dev"

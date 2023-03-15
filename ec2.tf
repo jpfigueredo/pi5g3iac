@@ -2,7 +2,7 @@ resource "aws_instance" "pi5_grupo3_ec2" {
   count         = 1
   ami           = var.ami
   instance_type = var.tipo_instancia
-  key_name      = "${var.usuario}-pi5-grupo3-key-pair"
+  key_name      = var.usuario
   tags = {
     "Name" = "${var.usuario}-ec2-${count.index}"
   }
@@ -13,7 +13,7 @@ resource "aws_instance" "pi5_grupo3_ec2_ansible" {
   count         = 1
   ami           = var.ami
   instance_type = var.tipo_instancia
-  key_name      = "${var.usuario}-pi5-grupo3-key-pair"
+  key_name      = var.usuario
   tags = {
     "Name" = "${var.usuario}-ec2-ansible-${count.index}"
   }

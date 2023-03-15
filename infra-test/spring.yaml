@@ -1,0 +1,42 @@
+- name: Install Docker
+  hosts: private-instance
+  become: true
+  tasks:
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+
+- name: Configure Java Container
+  hosts: private-instance
+  become: true
+  vars:
+    db_host: private-rds-instance.c5oeabm5hj7r.us-east-1.rds.amazonaws.com
+    db_port: 5432
+    db_name: mydb
+    db_user: myuser
+    db_password: mypass
+  tasks:
+    - name: Pull Java container image
+      docker_image:
+        name: openjdk:11-jdk-slim
+        state: present
+
+    - name: Create network for container
+      docker_network:
+        name: java_network
+
+    - name: Create and start container
+      docker_container:
+        name: java_app
+        image: openjdk:11-jdk-slim
+        state: started
+        ports:
+          - "8080:8080"
+        env:
+          SPRING_DATASOURCE_URL: "jdbc:postgresql://{{ db_host }}:{{ db_port }}/{{ db_name }}"
+          SPRING_DATASOURCE_USERNAME: "{{ db_user }}"
+          SPRING_DATASOURCE_PASSWORD: "{{ db_password }}"
+        networks:
+          - name: java_network
+            ipv4_address: 172.25.0.10

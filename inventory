@@ -1,13 +1,13 @@
-[banana]
-banana ansible_host=172.31.13.129 new_hostname=banana 
-[laranja]
-laranja ansible_host=172.31.10.142 new_hostname=laranja
+[ec2Ansible]
+ec2Ansible ansible_host=44.214.109.236 new_hostname=ec2Ansible 
+[ec2Docker]
+ec2Docker ansible_host=3.228.8.73 new_hostname=ec2Docker
 
 [all:vars]
 ansible_python_interpreter=/usr/bin/python3
 ansible_ssh_common_args='-o StrictHostKeyChecking=accept-new'
 ansible_user=ubuntu
-ansible_ssh_private_key_file=/home/ubuntu/.ssh/pi5-grupo3-key-pair
+ansible_ssh_private_key_file=./pi5-grupo3.pem
 
 #ansible-playbook playbook.yaml -i inventory
 #ansible -i inventory all -m ping
